@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		F49352CF2CB190480013EAA5 /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = F49352CE2CB190480013EAA5 /* Stripe */; };
 		F49352D12CB190480013EAA5 /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = F49352D02CB190480013EAA5 /* StripePaymentSheet */; };
+		F49352D42CB193100013EAA5 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = F49352D32CB193100013EAA5 /* Kingfisher */; };
 		F4CCF2D92CAF7355004CF7EF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2D82CAF7355004CF7EF /* FirebaseAuth */; };
 		F4CCF2DB2CAF7355004CF7EF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2DA2CAF7355004CF7EF /* FirebaseFirestore */; };
 		F4CCF2DD2CAF7355004CF7EF /* FirebaseFirestoreSwift-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2DC2CAF7355004CF7EF /* FirebaseFirestoreSwift-Beta */; };
@@ -71,6 +72,7 @@
 				F49352D12CB190480013EAA5 /* StripePaymentSheet in Frameworks */,
 				F49352CF2CB190480013EAA5 /* Stripe in Frameworks */,
 				F4CCF2DF2CAF7355004CF7EF /* FirebaseMessaging in Frameworks */,
+				F49352D42CB193100013EAA5 /* Kingfisher in Frameworks */,
 				F4CCF2DD2CAF7355004CF7EF /* FirebaseFirestoreSwift-Beta in Frameworks */,
 				F4CCF2D92CAF7355004CF7EF /* FirebaseAuth in Frameworks */,
 				F4D946CA2CB0EC9F00C11EE4 /* FirebaseFunctions in Frameworks */,
@@ -154,6 +156,7 @@
 				F4D946C92CB0EC9F00C11EE4 /* FirebaseFunctions */,
 				F49352CE2CB190480013EAA5 /* Stripe */,
 				F49352D02CB190480013EAA5 /* StripePaymentSheet */,
+				F49352D32CB193100013EAA5 /* Kingfisher */,
 			);
 			productName = AutoShare;
 			productReference = F4CCF1FE2CAF6484004CF7EF /* AutoShare.app */;
@@ -240,6 +243,7 @@
 			packageReferences = (
 				F4CCF2D72CAF7355004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				F49352CD2CB190480013EAA5 /* XCRemoteSwiftPackageReference "stripe-ios" */,
+				F49352D22CB1919A0013EAA5 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F4CCF1FF2CAF6484004CF7EF /* Products */;
@@ -618,6 +622,14 @@
 				minimumVersion = 23.31.0;
 			};
 		};
+		F49352D22CB1919A0013EAA5 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
 		F4CCF2D72CAF7355004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -638,6 +650,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F49352CD2CB190480013EAA5 /* XCRemoteSwiftPackageReference "stripe-ios" */;
 			productName = StripePaymentSheet;
+		};
+		F49352D32CB193100013EAA5 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F49352D22CB1919A0013EAA5 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 		F4CCF2D82CAF7355004CF7EF /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
