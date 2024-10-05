@@ -6,6 +6,7 @@ import Firebase
 @main
 struct AutoShareApp: App {
     @StateObject var firestoreService = FirestoreService()
+    @StateObject var reviewService = ReviewService() // Instantiate ReviewService
     @StateObject var authViewModel = AuthViewModel()
 
     init() {
@@ -14,8 +15,9 @@ struct AutoShareApp: App {
 
     var body: some Scene {
         WindowGroup {
-            BookingListView()
+            ContentView()
                 .environmentObject(firestoreService)
+                .environmentObject(reviewService) // Inject ReviewService
                 .environmentObject(authViewModel)
         }
     }

@@ -32,7 +32,7 @@ class ReviewService: ObservableObject {
     /// Adds a new review to Firestore.
     func addReview(_ review: Review) async throws {
         do {
-            _ = try db.collection("reviews").addDocument(from: review)
+            _ = try await db.collection("reviews").addDocument(from: review)
         } catch {
             throw AppError.databaseError("Failed to add review: \(error.localizedDescription)")
         }

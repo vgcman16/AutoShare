@@ -28,15 +28,13 @@ struct Booking: Identifiable, Codable {
     
     // Example Booking for Preview
     static let example = Booking(
-        id: "booking123",
         userID: "user123",
         vehicleID: "vehicle123",
         startDate: Date(),
         endDate: Calendar.current.date(byAdding: .day, value: 3, to: Date())!,
         rentalDays: 3,
-        totalAmount: 450.00,
-        status: "Confirmed",
+        totalAmount: 150.00,
+        status: "confirmed",
         createdAt: Date()
     )
 }
-

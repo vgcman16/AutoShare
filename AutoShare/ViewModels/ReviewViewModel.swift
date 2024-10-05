@@ -1,3 +1,5 @@
+// Services/ReviewViewModel.swift
+
 import Foundation
 
 class ReviewViewModel: ObservableObject {
@@ -32,12 +34,15 @@ class ReviewViewModel: ObservableObject {
         Task {
             isSubmitting = true
             defer { isSubmitting = false }
+            
+            // Corrected Review initialization
             let review = Review(
+                id: nil, // Assuming id is optional and managed by Firestore
+                userID: userID, // Correct parameter name
                 vehicleID: vehicleID,
-                reviewerID: userID, // Updated parameter name
                 rating: rating,
-                comment: comment,
-                date: Date()
+                comment: comment.trimmingCharacters(in: .whitespacesAndNewlines),
+                createdAt: Date() // Correct parameter name
             )
 
             do {

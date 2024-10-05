@@ -31,4 +31,3 @@ class UserService {
         try await db.collection("users").document(userID).setData(from: userProfile, merge: true)
     }
 }
-

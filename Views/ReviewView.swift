@@ -1,17 +1,10 @@
-//
-//  ReviewView.swift
-//  AutoShare
-//
-//  Created by Dustin Wood on 10/5/24.
-//
-
-
 // Views/ReviewView.swift
 
 import SwiftUI
 
 struct ReviewView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
+    @EnvironmentObject var reviewService: ReviewService // Add ReviewService as EnvironmentObject
     @Environment(\.presentationMode) var presentationMode
     
     @State private var rating: Int = 5
@@ -99,10 +92,10 @@ struct ReviewView: View {
             createdAt: Date()
         )
         
-        // Submit the review using FirestoreService
+        // Submit the review using ReviewService
         Task {
             do {
-                try await FirestoreService.shared.addReview(review)
+                try await reviewService.addReview(review)
                 
                 // Post a notification upon successful submission
                 DispatchQueue.main.async {
@@ -118,5 +111,13 @@ struct ReviewView: View {
                 }
             }
         }
+    }
+}
+
+struct ReviewView_Previews: PreviewProvider {
+    static var previews: some View {
+        ReviewView(vehicle: Vehicle.example)
+            .environmentObject(ReviewService()) // Inject ReviewService
+            .environmentObject(AuthViewModel())
     }
 }

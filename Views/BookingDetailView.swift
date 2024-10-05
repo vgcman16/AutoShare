@@ -1,11 +1,3 @@
-//
-//  BookingDetailView.swift
-//  AutoShare
-//
-//  Created by Dustin Wood on 10/4/24.
-//
-
-
 // BookingDetailView.swift
 
 import SwiftUI
@@ -23,7 +15,8 @@ struct BookingDetailView: View {
             
             // Vehicle Image
             if let vehicle = firestoreService.vehicles.first(where: { $0.id == booking.vehicleID }),
-               let imageURL = URL(string: vehicle.imageURL) {
+               let imageURLString = vehicle.imageURL, // Unwrap the optional String
+               let imageURL = URL(string: imageURLString) { // Initialize URL with non-optional String
                 AsyncImage(url: imageURL) { phase in
                     switch phase {
                     case .empty:
@@ -137,12 +130,16 @@ struct BookingDetailView: View {
 
 struct BookingDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        BookingDetailView(booking: Booking(userID: "user123",
-                                          vehicleID: "vehicle123",
-                                          rentalDays: 3,
-                                          totalAmount: 150.00,
-                                          status: "confirmed",
-                                          createdAt: Date()))
-            .environmentObject(FirestoreService())
+        BookingDetailView(booking: Booking(
+            userID: "user123",
+            vehicleID: "vehicle123",
+            startDate: Date(), // Added startDate
+            endDate: Calendar.current.date(byAdding: .day, value: 3, to: Date())!, // Added endDate
+            rentalDays: 3,
+            totalAmount: 150.00,
+            status: "confirmed",
+            createdAt: Date()
+        ))
+        .environmentObject(FirestoreService())
     }
 }
