@@ -1,11 +1,3 @@
-//
-//  ImageUploader.swift
-//  AutoShare
-//
-//  Created by Dustin Wood on 10/4/24.
-//
-
-
 // ImageUploader.swift
 
 import Foundation
@@ -13,46 +5,39 @@ import FirebaseStorage
 import UIKit
 
 class ImageUploader {
-    
-    /// Uploads a UIImage to Firebase Storage under the specified folder.
-    /// - Parameters:
-    ///   - image: The UIImage to upload.
-    ///   - folder: The folder path in Firebase Storage (e.g., "vehicle_images", "driver_license_images").
-    ///   - completion: Completion handler with Result containing the download URL string or an Error.
     static func uploadImage(image: UIImage, folder: String, completion: @escaping (Result<String, Error>) -> Void) {
-        
-        // Convert UIImage to JPEG data with compression quality of 0.8
+        // Convert UIImage to Data
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
             completion(.failure(NSError(domain: "ImageConversion", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to JPEG."])))
             return
         }
-        
-        // Initialize Firebase Storage reference
-        let storageRef = Storage.storage().reference()
-        
-        // Generate a unique identifier for the image
+
+        // Create a unique identifier for the image
         let imageID = UUID().uuidString
-        
-        // Create a reference to the desired folder and image ID
-        let imageRef = storageRef.child("\(folder)/\(imageID).jpg")
-        
-        // Upload the image data to Firebase Storage
-        imageRef.putData(imageData, metadata: nil) { metadata, error in
+
+        // Create a reference to Firebase Storage
+        let storageRef = Storage.storage().reference().child("\(folder)/\(imageID).jpg")
+
+        // Set metadata
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+
+        // Upload the image data
+        storageRef.putData(imageData, metadata: metadata) { metadata, error in
             if let error = error {
-                // Handle upload error
+                print("Error uploading image: \(error.localizedDescription)")
                 completion(.failure(error))
                 return
             }
-            
-            // Retrieve the download URL after successful upload
-            imageRef.downloadURL { url, error in
+
+            // Retrieve the download URL
+            storageRef.downloadURL { url, error in
                 if let error = error {
-                    // Handle URL retrieval error
+                    print("Error retrieving download URL: \(error.localizedDescription)")
                     completion(.failure(error))
                     return
                 }
-                
-                // Ensure the URL is valid and return it as a string
+
                 if let urlString = url?.absoluteString {
                     completion(.success(urlString))
                 } else {

@@ -12,10 +12,10 @@
 		F4CCF2DD2CAF7355004CF7EF /* FirebaseFirestoreSwift-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2DC2CAF7355004CF7EF /* FirebaseFirestoreSwift-Beta */; };
 		F4CCF2DF2CAF7355004CF7EF /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2DE2CAF7355004CF7EF /* FirebaseMessaging */; };
 		F4CCF2E12CAF7355004CF7EF /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2E02CAF7355004CF7EF /* FirebaseStorage */; };
-		F4CCF2E32CAF7B1A004CF7EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4CCF2E22CAF7B1A004CF7EF /* AppDelegate.swift */; };
 		F4D946BD2CB0B5E200C11EE4 /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = F4D946BC2CB0B5E200C11EE4 /* Stripe */; };
 		F4D946BF2CB0BB5F00C11EE4 /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = F4D946BE2CB0BB5F00C11EE4 /* StripePaymentSheet */; };
 		F4D946C12CB0BB6B00C11EE4 /* StripePayments in Frameworks */ = {isa = PBXBuildFile; productRef = F4D946C02CB0BB6B00C11EE4 /* StripePayments */; };
+		F4D946CA2CB0EC9F00C11EE4 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = F4D946C92CB0EC9F00C11EE4 /* FirebaseFunctions */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +39,6 @@
 		F4CCF1FE2CAF6484004CF7EF /* AutoShare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AutoShare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4CCF20E2CAF6487004CF7EF /* AutoShareTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AutoShareTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4CCF2182CAF6487004CF7EF /* AutoShareUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AutoShareUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F4CCF2E22CAF7B1A004CF7EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -68,6 +67,7 @@
 				F4CCF2DF2CAF7355004CF7EF /* FirebaseMessaging in Frameworks */,
 				F4CCF2DD2CAF7355004CF7EF /* FirebaseFirestoreSwift-Beta in Frameworks */,
 				F4CCF2D92CAF7355004CF7EF /* FirebaseAuth in Frameworks */,
+				F4D946CA2CB0EC9F00C11EE4 /* FirebaseFunctions in Frameworks */,
 				F4CCF2E12CAF7355004CF7EF /* FirebaseStorage in Frameworks */,
 				F4D946BF2CB0BB5F00C11EE4 /* StripePaymentSheet in Frameworks */,
 				F4CCF2DB2CAF7355004CF7EF /* FirebaseFirestore in Frameworks */,
@@ -96,7 +96,6 @@
 		F4CCF1F52CAF6484004CF7EF = {
 			isa = PBXGroup;
 			children = (
-				F4CCF2E22CAF7B1A004CF7EF /* AppDelegate.swift */,
 				F4CCF2002CAF6484004CF7EF /* AutoShare */,
 				F4CCF2112CAF6487004CF7EF /* AutoShareTests */,
 				F4CCF21B2CAF6487004CF7EF /* AutoShareUITests */,
@@ -150,6 +149,7 @@
 				F4D946BC2CB0B5E200C11EE4 /* Stripe */,
 				F4D946BE2CB0BB5F00C11EE4 /* StripePaymentSheet */,
 				F4D946C02CB0BB6B00C11EE4 /* StripePayments */,
+				F4D946C92CB0EC9F00C11EE4 /* FirebaseFunctions */,
 			);
 			productName = AutoShare;
 			productReference = F4CCF1FE2CAF6484004CF7EF /* AutoShare.app */;
@@ -278,7 +278,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F4CCF2E32CAF7B1A004CF7EF /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -665,6 +664,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F4D946BB2CB0B5E200C11EE4 /* XCRemoteSwiftPackageReference "stripe-ios" */;
 			productName = StripePayments;
+		};
+		F4D946C92CB0EC9F00C11EE4 /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F4CCF2D72CAF7355004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
