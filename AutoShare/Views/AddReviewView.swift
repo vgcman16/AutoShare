@@ -1,83 +1,131 @@
+//
+//  AddReviewView.swift
+//  AutoShare
+//
+//  Created by Dustin Wood on 10/4/24.
+//
+
 import SwiftUI
-import FirebaseAuth
 
 struct AddReviewView: View {
-    var vehicle: Vehicle
     @EnvironmentObject var firestoreService: FirestoreService
     @EnvironmentObject var authViewModel: AuthViewModel
     @Environment(\.presentationMode) var presentationMode
     
-    @State private var rating: Int = 3
+    var vehicle: Vehicle
+    
+    @State private var rating: Int = 5
     @State private var comment: String = ""
+    @State private var isSubmitting: Bool = false
+    @State private var errorMessage: String? = nil // Local error message instead of binding to FirestoreService
     @State private var showError: Bool = false
-    @State private var errorMessage: String = ""
     
     var body: some View {
         NavigationView {
-            Form {
-                Section(header: Text("Rating")) {
+            VStack(spacing: 20) {
+                Text("Add Review")
+                    .font(.largeTitle)
+                    .bold()
+                    .padding(.top)
+                
+                // Rating Picker
+                VStack(alignment: .leading) {
+                    Text("Rating")
+                        .font(.headline)
                     Picker("Rating", selection: $rating) {
-                        ForEach(1...5, id: \.self) { number in
-                            Text("\(number) Star\(number > 1 ? "s" : "")").tag(number)
+                        ForEach(1..<6) { num in
+                            Text("\(num)").tag(num)
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
+                .padding(.horizontal)
                 
-                Section(header: Text("Comment")) {
+                // Comment Field
+                VStack(alignment: .leading) {
+                    Text("Comment")
+                        .font(.headline)
                     TextEditor(text: $comment)
                         .frame(height: 150)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.gray.opacity(0.5), lineWidth: 1)
-                        )
+                        .padding(4)
+                        .background(Color(.secondarySystemBackground))
+                        .cornerRadius(8)
+                }
+                .padding(.horizontal)
+                
+                if let error = errorMessage, showError {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
                 }
                 
-                if showError {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
+                Button(action: {
+                    submitReview()
+                }) {
+                    if isSubmitting {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(8)
+                    } else {
+                        Text("Submit Review")
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(8)
+                    }
                 }
+                .disabled(isSubmitting)
+                .padding(.horizontal)
+                
+                Spacer()
             }
             .navigationTitle("Add Review")
-            .navigationBarItems(leading: Button("Cancel") {
+            .navigationBarItems(trailing: Button("Cancel") {
                 presentationMode.wrappedValue.dismiss()
-            }, trailing: Button("Submit") {
-                submitReview()
             })
-            .alert(isPresented: $showError) {
-                Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
-            }
         }
     }
     
+    /// Handles the submission of a new review.
     func submitReview() {
-        guard !comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            errorMessage = "Please enter a comment."
-            showError = true
-            return
-        }
-        
         guard let user = authViewModel.user else {
             errorMessage = "User not authenticated."
             showError = true
             return
         }
         
-        let newReview = Review(
+        guard !comment.isEmpty else {
+            errorMessage = "Please enter a comment."
+            showError = true
+            return
+        }
+        
+        isSubmitting = true
+        showError = false
+        
+        let review = Review(
             vehicleID: vehicle.id ?? "",
             reviewerID: user.uid,
             rating: rating,
             comment: comment,
-            timestamp: Date()
+            date: Date()
         )
         
-        firestoreService.addReview(review: newReview) { result in
-            switch result {
-            case .success():
-                presentationMode.wrappedValue.dismiss()
-            case .failure(let error):
-                errorMessage = error.localizedDescription
-                showError = true
+        firestoreService.addReview(review: review) { result in
+            DispatchQueue.main.async {
+                isSubmitting = false
+                switch result {
+                case .success():
+                    presentationMode.wrappedValue.dismiss()
+                case .failure(let error):
+                    errorMessage = error.localizedDescription
+                    showError = true
+                }
             }
         }
     }

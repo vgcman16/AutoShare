@@ -1,4 +1,9 @@
-// SignUpView.swift
+//
+//  SignUpView.swift
+//  AutoShare
+//
+//  Created by Dustin Wood on 10/4/24.
+//
 
 import SwiftUI
 
@@ -66,6 +71,9 @@ struct SignUpView: View {
                 }
             }
             .disabled(isLoading)
+            .alert(isPresented: $showErrorAlert) {
+                Alert(title: Text("Sign Up Failed"), message: Text(authViewModel.errorMessage ?? "Unknown error"), dismissButton: .default(Text("OK")))
+            }
         }
         .padding()
     }
@@ -99,7 +107,7 @@ struct SignUpView: View {
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
         SignUpView()
-            .environmentObject(AuthViewModel())
+            .environmentObject(AuthViewModel())  // Inject the environment object here
             .environmentObject(FirestoreService())
     }
 }

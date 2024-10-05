@@ -7,10 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F4CCF26F2CAF6B5E004CF7EF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF26E2CAF6B5E004CF7EF /* FirebaseAuth */; };
-		F4CCF2712CAF6B5E004CF7EF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2702CAF6B5E004CF7EF /* FirebaseFirestore */; };
-		F4CCF2732CAF6B5E004CF7EF /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2722CAF6B5E004CF7EF /* FirebaseMessaging */; };
-		F4CCF2752CAF6B5E004CF7EF /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2742CAF6B5E004CF7EF /* FirebaseStorage */; };
+		F4CCF2D92CAF7355004CF7EF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2D82CAF7355004CF7EF /* FirebaseAuth */; };
+		F4CCF2DB2CAF7355004CF7EF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2DA2CAF7355004CF7EF /* FirebaseFirestore */; };
+		F4CCF2DD2CAF7355004CF7EF /* FirebaseFirestoreSwift-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2DC2CAF7355004CF7EF /* FirebaseFirestoreSwift-Beta */; };
+		F4CCF2DF2CAF7355004CF7EF /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2DE2CAF7355004CF7EF /* FirebaseMessaging */; };
+		F4CCF2E12CAF7355004CF7EF /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F4CCF2E02CAF7355004CF7EF /* FirebaseStorage */; };
+		F4CCF2E32CAF7B1A004CF7EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4CCF2E22CAF7B1A004CF7EF /* AppDelegate.swift */; };
+		F4D946BD2CB0B5E200C11EE4 /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = F4D946BC2CB0B5E200C11EE4 /* Stripe */; };
+		F4D946BF2CB0BB5F00C11EE4 /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = F4D946BE2CB0BB5F00C11EE4 /* StripePaymentSheet */; };
+		F4D946C12CB0BB6B00C11EE4 /* StripePayments in Frameworks */ = {isa = PBXBuildFile; productRef = F4D946C02CB0BB6B00C11EE4 /* StripePayments */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +39,7 @@
 		F4CCF1FE2CAF6484004CF7EF /* AutoShare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AutoShare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4CCF20E2CAF6487004CF7EF /* AutoShareTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AutoShareTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4CCF2182CAF6487004CF7EF /* AutoShareUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AutoShareUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4CCF2E22CAF7B1A004CF7EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -59,10 +65,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F4CCF2732CAF6B5E004CF7EF /* FirebaseMessaging in Frameworks */,
-				F4CCF2752CAF6B5E004CF7EF /* FirebaseStorage in Frameworks */,
-				F4CCF26F2CAF6B5E004CF7EF /* FirebaseAuth in Frameworks */,
-				F4CCF2712CAF6B5E004CF7EF /* FirebaseFirestore in Frameworks */,
+				F4CCF2DF2CAF7355004CF7EF /* FirebaseMessaging in Frameworks */,
+				F4CCF2DD2CAF7355004CF7EF /* FirebaseFirestoreSwift-Beta in Frameworks */,
+				F4CCF2D92CAF7355004CF7EF /* FirebaseAuth in Frameworks */,
+				F4CCF2E12CAF7355004CF7EF /* FirebaseStorage in Frameworks */,
+				F4D946BF2CB0BB5F00C11EE4 /* StripePaymentSheet in Frameworks */,
+				F4CCF2DB2CAF7355004CF7EF /* FirebaseFirestore in Frameworks */,
+				F4D946C12CB0BB6B00C11EE4 /* StripePayments in Frameworks */,
+				F4D946BD2CB0B5E200C11EE4 /* Stripe in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,9 +96,11 @@
 		F4CCF1F52CAF6484004CF7EF = {
 			isa = PBXGroup;
 			children = (
+				F4CCF2E22CAF7B1A004CF7EF /* AppDelegate.swift */,
 				F4CCF2002CAF6484004CF7EF /* AutoShare */,
 				F4CCF2112CAF6487004CF7EF /* AutoShareTests */,
 				F4CCF21B2CAF6487004CF7EF /* AutoShareUITests */,
+				F4CCF2D62CAF7123004CF7EF /* Frameworks */,
 				F4CCF1FF2CAF6484004CF7EF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,6 +113,13 @@
 				F4CCF2182CAF6487004CF7EF /* AutoShareUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F4CCF2D62CAF7123004CF7EF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -123,10 +142,14 @@
 			);
 			name = AutoShare;
 			packageProductDependencies = (
-				F4CCF26E2CAF6B5E004CF7EF /* FirebaseAuth */,
-				F4CCF2702CAF6B5E004CF7EF /* FirebaseFirestore */,
-				F4CCF2722CAF6B5E004CF7EF /* FirebaseMessaging */,
-				F4CCF2742CAF6B5E004CF7EF /* FirebaseStorage */,
+				F4CCF2D82CAF7355004CF7EF /* FirebaseAuth */,
+				F4CCF2DA2CAF7355004CF7EF /* FirebaseFirestore */,
+				F4CCF2DC2CAF7355004CF7EF /* FirebaseFirestoreSwift-Beta */,
+				F4CCF2DE2CAF7355004CF7EF /* FirebaseMessaging */,
+				F4CCF2E02CAF7355004CF7EF /* FirebaseStorage */,
+				F4D946BC2CB0B5E200C11EE4 /* Stripe */,
+				F4D946BE2CB0BB5F00C11EE4 /* StripePaymentSheet */,
+				F4D946C02CB0BB6B00C11EE4 /* StripePayments */,
 			);
 			productName = AutoShare;
 			productReference = F4CCF1FE2CAF6484004CF7EF /* AutoShare.app */;
@@ -211,7 +234,8 @@
 			mainGroup = F4CCF1F52CAF6484004CF7EF;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				F4CCF26D2CAF6B5E004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				F4CCF2D72CAF7355004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				F4D946BB2CB0B5E200C11EE4 /* XCRemoteSwiftPackageReference "stripe-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F4CCF1FF2CAF6484004CF7EF /* Products */;
@@ -254,6 +278,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4CCF2E32CAF7B1A004CF7EF /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,6 +436,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"AutoShare/Preview Content\"";
@@ -427,8 +453,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.autoshare.AutoShare;
+				PRODUCT_BUNDLE_IDENTIFIER = com.AutoShare.AutoShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -440,6 +467,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"AutoShare/Preview Content\"";
@@ -456,8 +484,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.autoshare.AutoShare;
+				PRODUCT_BUNDLE_IDENTIFIER = com.AutoShare.AutoShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -578,36 +607,64 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		F4CCF26D2CAF6B5E004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		F4CCF2D72CAF7355004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 11.3.0;
+				minimumVersion = 8.11.0;
+			};
+		};
+		F4D946BB2CB0B5E200C11EE4 /* XCRemoteSwiftPackageReference "stripe-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stripe/stripe-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 23.31.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		F4CCF26E2CAF6B5E004CF7EF /* FirebaseAuth */ = {
+		F4CCF2D82CAF7355004CF7EF /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F4CCF26D2CAF6B5E004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = F4CCF2D72CAF7355004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
 		};
-		F4CCF2702CAF6B5E004CF7EF /* FirebaseFirestore */ = {
+		F4CCF2DA2CAF7355004CF7EF /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F4CCF26D2CAF6B5E004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = F4CCF2D72CAF7355004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
 		};
-		F4CCF2722CAF6B5E004CF7EF /* FirebaseMessaging */ = {
+		F4CCF2DC2CAF7355004CF7EF /* FirebaseFirestoreSwift-Beta */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F4CCF26D2CAF6B5E004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = F4CCF2D72CAF7355004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseFirestoreSwift-Beta";
+		};
+		F4CCF2DE2CAF7355004CF7EF /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F4CCF2D72CAF7355004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
 		};
-		F4CCF2742CAF6B5E004CF7EF /* FirebaseStorage */ = {
+		F4CCF2E02CAF7355004CF7EF /* FirebaseStorage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F4CCF26D2CAF6B5E004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = F4CCF2D72CAF7355004CF7EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		F4D946BC2CB0B5E200C11EE4 /* Stripe */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F4D946BB2CB0B5E200C11EE4 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = Stripe;
+		};
+		F4D946BE2CB0BB5F00C11EE4 /* StripePaymentSheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F4D946BB2CB0B5E200C11EE4 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = StripePaymentSheet;
+		};
+		F4D946C02CB0BB6B00C11EE4 /* StripePayments */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F4D946BB2CB0B5E200C11EE4 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			productName = StripePayments;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

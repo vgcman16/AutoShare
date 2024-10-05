@@ -1,9 +1,16 @@
 import Foundation
 import FirebaseFirestoreSwift
 
-struct UserProfile: Codable, Identifiable {
+struct UserProfile: Identifiable, Codable {
     @DocumentID var id: String?
-    var name: String
+    var userID: String? // Make userID optional to handle cases where it might be missing
+    var fullName: String
     var email: String
-    // Add other relevant fields if needed
+    var driverLicenseURL: String?
+    var profileImageURL: String?
+    var phoneNumber: String?
+    var createdAt: Date
+    
+    // Optional: Additional fields can be added here as needed
 }
+

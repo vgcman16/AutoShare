@@ -1,18 +1,16 @@
-// UserProfileView.swift
-
 import SwiftUI
 
 struct UserProfileView: View {
     @EnvironmentObject var firestoreService: FirestoreService
     @EnvironmentObject var authViewModel: AuthViewModel
     @Environment(\.presentationMode) var presentationMode
-    
+
     @State private var fullName: String = ""
     @State private var selectedImage: UIImage? = nil
     @State private var showingImagePicker = false
     @State private var isSubmitting: Bool = false
     @State private var showError: Bool = false
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -63,7 +61,7 @@ struct UserProfileView: View {
                             ImagePicker(image: $selectedImage)
                         }
                     }
-                    
+
                     // Full Name Field
                     VStack(alignment: .leading) {
                         Text("Full Name")
@@ -75,14 +73,14 @@ struct UserProfileView: View {
                             .cornerRadius(8)
                     }
                     .padding(.horizontal)
-                    
-                    if let error = firestoreService.errorMessage, showError {
-                        Text(error)
+
+                    if showError {
+                        Text(firestoreService.errorMessage ?? "An error occurred")
                             .foregroundColor(.red)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal)
                     }
-                    
+
                     Button(action: {
                         updateProfile()
                     }) {
@@ -104,7 +102,7 @@ struct UserProfileView: View {
                     }
                     .disabled(isSubmitting)
                     .padding(.horizontal)
-                    
+
                     Spacer()
                 }
                 .padding()
@@ -115,15 +113,19 @@ struct UserProfileView: View {
             })
             .onAppear {
                 if let user = authViewModel.user {
-                    firestoreService.fetchUserProfile(for: user.uid)
-                    if let profile = firestoreService.userProfile {
-                        fullName = profile.fullName
+                    firestoreService.fetchUserProfile(for: user.uid) { result in
+                        switch result {
+                        case .success(let profile):
+                            fullName = profile.fullName
+                        case .failure(let error):
+                            firestoreService.errorMessage = error.localizedDescription
+                        }
                     }
                 }
             }
         }
     }
-    
+
     /// Handles the update of user profile information.
     func updateProfile() {
         guard let user = authViewModel.user else {
@@ -131,19 +133,19 @@ struct UserProfileView: View {
             showError = true
             return
         }
-        
+
         guard !fullName.isEmpty else {
             firestoreService.errorMessage = "Please enter your full name."
             showError = true
             return
         }
-        
+
         isSubmitting = true
         showError = false
-        
+
         let group = DispatchGroup()
         var uploadSuccess = true
-        
+
         // Update Full Name
         group.enter()
         firestoreService.updateFullName(userID: user.uid, fullName: fullName) { result in
@@ -156,11 +158,11 @@ struct UserProfileView: View {
             }
             group.leave()
         }
-        
+
         // Upload Driver's License Image if selected
         if let image = selectedImage {
             group.enter()
-            ImageUploader.uploadImage(image: image) { result in
+            ImageUploader.uploadImage(image: image, folder: "driver_license_images") { result in
                 switch result {
                 case .success(let urlString):
                     firestoreService.updateDriverLicense(userID: user.uid, driverLicenseURL: urlString) { result in
@@ -180,7 +182,7 @@ struct UserProfileView: View {
                 }
             }
         }
-        
+
         group.notify(queue: .main) {
             isSubmitting = false
             if uploadSuccess {

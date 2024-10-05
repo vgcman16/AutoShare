@@ -1,11 +1,13 @@
+// Review.swift
+
 import Foundation
 import FirebaseFirestoreSwift
 
-struct Review: Codable, Identifiable {
+struct Review: Identifiable, Codable {
     @DocumentID var id: String?
     var vehicleID: String
     var reviewerID: String
-    var rating: Int
+    var rating: Int // 1 to 5
     var comment: String
-    var timestamp: Date
+    var date: Date
 }

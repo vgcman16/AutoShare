@@ -1,9 +1,17 @@
+// Vehicle.swift
+
 import Foundation
 import FirebaseFirestoreSwift
 
-struct Vehicle: Codable, Identifiable {
+struct Vehicle: Identifiable, Codable {
     @DocumentID var id: String?
-    var name: String
+    var ownerID: String
+    var make: String
     var model: String
-    var averageRating: Double?
+    var year: Int
+    var pricePerDay: Double
+    var location: String
+    var imageURL: String
+    var isAvailable: Bool
+    var createdAt: Date
 }

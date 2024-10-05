@@ -1,3 +1,11 @@
+//
+//  BookingDetailView.swift
+//  AutoShare
+//
+//  Created by Dustin Wood on 10/4/24.
+//
+
+
 // BookingDetailView.swift
 
 import SwiftUI

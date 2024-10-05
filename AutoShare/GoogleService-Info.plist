@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyDCLzzCoe1ObT6xEZmlqA1NNddy_SvvcsE</string>
+	<string>AIzaSyAWw_V0u0uZcFisPbLut7g_jjKI0YRGu_Q</string>
 	<key>GCM_SENDER_ID</key>
-	<string>472927715366</string>
+	<string>233939174673</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.autoshare</string>
+	<string>com.AutoShare.AutoShare</string>
 	<key>PROJECT_ID</key>
-	<string>autoshare-7edc1</string>
+	<string>autoshare-3cc40</string>
 	<key>STORAGE_BUCKET</key>
-	<string>autoshare-7edc1.appspot.com</string>
+	<string>autoshare-3cc40.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:472927715366:ios:ba535fff3f6b4ec73ae6e7</string>
+	<string>1:233939174673:ios:bbcd7d6fd9bb34134f78b0</string>
 </dict>
 </plist>

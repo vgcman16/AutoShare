@@ -1,75 +1,70 @@
 import Foundation
 import FirebaseAuth
-import Combine
 
 class AuthViewModel: ObservableObject {
-    @Published var user: User? = Auth.auth().currentUser
-    @Published var isLoading: Bool = false
-    @Published var authError: String? = nil
+    @Published var user: User? = nil
+    @Published var isLoggedIn: Bool = false
+    @Published var errorMessage: String? = nil
     
-    private var authStateHandle: AuthStateDidChangeListenerHandle?
+    private var authHandle: AuthStateDidChangeListenerHandle?
     
     init() {
-        authStateHandle = Auth.auth().addStateDidChangeListener { [weak self] (auth, user) in
+        // Listen to authentication state changes
+        authHandle = Auth.auth().addStateDidChangeListener { [weak self] auth, user in
             self?.user = user
+            self?.isLoggedIn = user != nil
         }
     }
     
     deinit {
-        if let handle = authStateHandle {
+        if let handle = authHandle {
             Auth.auth().removeStateDidChangeListener(handle)
         }
     }
     
-    // Sign In Function
-    func signIn(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        isLoading = true
-        Auth.auth().signIn(withEmail: email, password: password) { [weak self] (result, error) in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-                if let error = error {
-                    self?.authError = error.localizedDescription
-                    completion(.failure(error))
-                } else {
-                    self?.authError = nil
-                    completion(.success(()))
-                }
-            }
-        }
-    }
-    
     // Sign Up Function
-    func signUp(name: String, email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        isLoading = true
-        Auth.auth().createUser(withEmail: email, password: password) { [weak self] (result, error) in
+    func signUp(email: String, password: String, fullName: String, completion: @escaping (Bool) -> Void) {
+        Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
             DispatchQueue.main.async {
-                self?.isLoading = false
                 if let error = error {
-                    self?.authError = error.localizedDescription
-                    completion(.failure(error))
+                    self?.errorMessage = error.localizedDescription
+                    completion(false)  // Sign up failed
                 } else if let user = result?.user {
-                    // Create a user profile in Firestore
-                    let userProfile = UserProfile(id: user.uid, name: name, email: email)
-                    Firestore.firestore().collection("userProfiles").document(user.uid).setData([
-                        "name": name,
-                        "email": email
-                    ]) { error in
-                        if let error = error {
-                            self?.authError = error.localizedDescription
-                            completion(.failure(error))
-                        } else {
-                            self?.authError = nil
-                            completion(.success(()))
-                        }
-                    }
+                    self?.errorMessage = nil
+                    self?.user = user
+                    completion(true)  // Sign up succeeded
+                } else {
+                    self?.errorMessage = "Unknown error occurred."
+                    completion(false)
                 }
             }
         }
     }
     
-    // Sign Out Function
-    func signOut() throws {
-        try Auth.auth().signOut()
-        self.user = nil
+    // Login Function
+    func login(email: String, password: String, completion: @escaping (Bool) -> Void) {
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self?.errorMessage = error.localizedDescription
+                    completion(false)  // Login failed
+                } else {
+                    self?.errorMessage = nil
+                    self?.user = result?.user
+                    completion(true)  // Login succeeded
+                }
+            }
+        }
+    }
+    
+    // Logout Function
+    func logout() {
+        do {
+            try Auth.auth().signOut()
+            self.user = nil
+            self.isLoggedIn = false
+        } catch let signOutError as NSError {
+            self.errorMessage = signOutError.localizedDescription
+        }
     }
 }

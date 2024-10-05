@@ -1,3 +1,11 @@
+//
+//  Transaction.swift
+//  AutoShare
+//
+//  Created by Dustin Wood on 10/4/24.
+//
+
+
 // Transaction.swift
 
 import Foundation

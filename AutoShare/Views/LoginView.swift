@@ -1,5 +1,3 @@
-// LoginView.swift
-
 import SwiftUI
 
 struct LoginView: View {
@@ -34,7 +32,7 @@ struct LoginView: View {
             }
             
             Button(action: {
-                login()
+                login()  // Calls the login function within the same scope
             }) {
                 if isLoading {
                     ProgressView()
@@ -55,8 +53,12 @@ struct LoginView: View {
             .disabled(isLoading)
         }
         .padding()
+        .alert(isPresented: $showErrorAlert) {
+            Alert(title: Text("Login Failed"), message: Text(authViewModel.errorMessage ?? "Unknown error"), dismissButton: .default(Text("OK")))
+        }
     }
     
+    // login function moved inside the scope of LoginView where it has access to email, password, etc.
     func login() {
         guard !email.isEmpty, !password.isEmpty else {
             authViewModel.errorMessage = "Please enter both email and password."

@@ -1,5 +1,3 @@
-// PaymentView.swift
-
 import SwiftUI
 import Stripe
 
@@ -18,12 +16,13 @@ struct PaymentView: View {
                 ProgressView("Preparing Payment...")
                     .progressViewStyle(CircularProgressViewStyle(tint: .blue))
                     .scaleEffect(1.5)
-            } else if let paymentSheet = paymentViewModel.paymentSheet {
+            } else if paymentViewModel.paymentSheet != nil {
                 Text("Processing Payment...")
                     .font(.headline)
                 
                 Button(action: {
-                    if let topVC = UIApplication.shared.windows.first?.rootViewController {
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let topVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
                         paymentViewModel.presentPaymentSheet(from: topVC)
                     }
                 }) {
@@ -82,7 +81,7 @@ struct PaymentView: View {
     
     /// Prepares the PaymentSheet by fetching necessary payment details from the backend.
     func preparePayment() {
-        guard let user = authViewModel.user else {
+        guard authViewModel.user != nil else {
             errorMessage = "User not authenticated."
             isLoading = false
             return
