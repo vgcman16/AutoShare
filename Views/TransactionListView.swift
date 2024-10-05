@@ -1,13 +1,3 @@
-//
-//  TransactionListView.swift
-//  AutoShare
-//
-//  Created by Dustin Wood on 10/4/24.
-//
-
-
-// TransactionListView.swift
-
 import SwiftUI
 
 struct TransactionListView: View {
@@ -44,9 +34,9 @@ struct TransactionListView: View {
             }
         }
         .navigationTitle("Transactions")
-        .onAppear {
+        .task {
             if let user = authViewModel.user {
-                firestoreService.fetchTransactions(for: user.uid)
+                await firestoreService.fetchTransactions(for: user.uid)
             }
         }
     }
@@ -59,3 +49,4 @@ struct TransactionListView: View {
         return formatter.string(from: date)
     }
 }
+

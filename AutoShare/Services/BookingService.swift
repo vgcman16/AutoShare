@@ -8,7 +8,7 @@ class BookingService: ObservableObject {
     private let db = Firestore.firestore()
     @Published var bookings: [Booking] = []
     @Published var errorMessage: String?
-
+    
     /// Fetches bookings for a specific user.
     func fetchBookings(for userID: String) async throws {
         do {
@@ -32,7 +32,7 @@ class BookingService: ObservableObject {
     /// Adds a new booking to Firestore.
     func addBooking(_ booking: Booking) async throws {
         do {
-            _ = try db.collection("bookings").addDocument(from: booking)
+            _ = try await db.collection("bookings").addDocument(from: booking)
         } catch {
             throw AppError.databaseError("Failed to add booking: \(error.localizedDescription)")
         }
@@ -44,7 +44,7 @@ class BookingService: ObservableObject {
             throw AppError.validationError("Booking ID is missing.")
         }
         do {
-            try db.collection("bookings").document(bookingID).setData(from: booking)
+            try await db.collection("bookings").document(bookingID).setData(from: booking)
         } catch {
             throw AppError.databaseError("Failed to update booking: \(error.localizedDescription)")
         }

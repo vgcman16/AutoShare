@@ -1,94 +1,80 @@
-//
-//  BookingListView.swift
-//  AutoShare
-//
-//  Created by Dustin Wood on 10/4/24.
-//
-
-
-// BookingListView.swift
+// Views/BookingListView.swift
 
 import SwiftUI
 
 struct BookingListView: View {
     @EnvironmentObject var firestoreService: FirestoreService
     @EnvironmentObject var authViewModel: AuthViewModel
-    
+
     var body: some View {
         NavigationView {
-            List(firestoreService.bookings) { booking in
-                NavigationLink(destination: BookingDetailView(booking: booking)) {
-                    BookingRowView(booking: booking)
+            if firestoreService.isLoading {
+                // Display a loading indicator while data is being fetched
+                ProgressView("Loading Bookings...")
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .scaleEffect(1.5)
+            } else if let errorMessage = firestoreService.errorMessage {
+                // Display error message if there's an error
+                VStack {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                    
+                    Button(action: {
+                        fetchData()
+                    }) {
+                        Text("Retry")
+                            .foregroundColor(.blue)
+                    }
+                }
+                .padding()
+            } else if firestoreService.bookings.isEmpty {
+                // Display a message if there are no bookings
+                VStack {
+                    Text("You have no bookings.")
+                        .foregroundColor(.gray)
+                        .padding()
+                    
+                    Button(action: {
+                        // Optionally, navigate to a view to make a new booking
+                        // For example:
+                        // showVehicleList = true
+                    }) {
+                        Text("Browse Vehicles")
+                            .foregroundColor(.blue)
+                    }
+                }
+            } else {
+                // Display the list of bookings
+                List(firestoreService.bookings) { booking in
+                    NavigationLink(destination: BookingDetailView(booking: booking)) {
+                        BookingRowView(booking: booking)
+                    }
+                }
+                .listStyle(PlainListStyle())
+                .navigationTitle("My Bookings")
+                .refreshable {
+                    // Allow users to pull to refresh
+                    fetchData()
                 }
             }
-            .listStyle(PlainListStyle())
-            .navigationTitle("My Bookings")
-            .onAppear {
-                if let user = authViewModel.user {
-                    firestoreService.fetchBookings(for: user.uid)
-                }
-            }
+        }
+        .onAppear {
+            fetchData()
         }
     }
-}
-
-struct BookingRowView: View {
-    var booking: Booking
-    @EnvironmentObject var firestoreService: FirestoreService
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text(getVehicleDetails(vehicleID: booking.vehicleID))
-                .font(.headline)
-            
-            HStack {
-                Text("Rental Days: \(booking.rentalDays)")
-                Spacer()
-                Text("Total: $\(booking.totalAmount, specifier: "%.2f")")
-            }
-            .font(.subheadline)
-            
-            HStack {
-                Text("Status: \(booking.status.capitalized)")
-                    .foregroundColor(statusColor(status: booking.status))
-                Spacer()
-                Text(formattedDate(booking.createdAt))
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
+    /// Fetch both vehicles and bookings for the authenticated user
+    private func fetchData() {
+        guard let user = authViewModel.user else {
+            firestoreService.errorMessage = "User not authenticated."
+            return
         }
-        .padding(.vertical, 5)
-    }
-    
-    /// Retrieves vehicle details based on vehicleID
-    func getVehicleDetails(vehicleID: String) -> String {
-        if let vehicle = firestoreService.vehicles.first(where: { $0.id == vehicleID }) {
-            return "\(vehicle.year) \(vehicle.make) \(vehicle.model)"
-        }
-        return "Unknown Vehicle"
-    }
-    
-    /// Formats the date to a readable string
-    func formattedDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
-    }
-    
-    /// Determines the color based on booking status
-    func statusColor(status: String) -> Color {
-        switch status.lowercased() {
-        case "confirmed":
-            return .green
-        case "pending":
-            return .orange
-        case "completed":
-            return .blue
-        case "cancelled":
-            return .red
-        default:
-            return .gray
+        
+        Task {
+            await firestoreService.fetchAvailableVehicles()
+            await firestoreService.fetchBookings(for: user.uid)
         }
     }
 }
@@ -100,3 +86,4 @@ struct BookingListView_Previews: PreviewProvider {
             .environmentObject(AuthViewModel())
     }
 }
+

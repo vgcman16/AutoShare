@@ -5,15 +5,18 @@ import Firebase
 
 @main
 struct AutoShareApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @StateObject var authViewModel = AuthViewModel()
     @StateObject var firestoreService = FirestoreService()
-    
+    @StateObject var authViewModel = AuthViewModel()
+
+    init() {
+        FirebaseApp.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(authViewModel)
+            BookingListView()
                 .environmentObject(firestoreService)
+                .environmentObject(authViewModel)
         }
     }
 }

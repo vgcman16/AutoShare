@@ -5,7 +5,7 @@ import FirebaseFirestoreSwift
 
 struct UserProfile: Identifiable, Codable {
     @DocumentID var id: String?
-    var userID: String?
+    var userID: String // Made non-optional
     var fullName: String
     var email: String
     var driverLicenseURL: String?

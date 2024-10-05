@@ -1,3 +1,5 @@
+// AuthViewModel.swift
+
 import Foundation
 import FirebaseAuth
 
@@ -11,8 +13,10 @@ class AuthViewModel: ObservableObject {
     init() {
         // Listen to authentication state changes
         authHandle = Auth.auth().addStateDidChangeListener { [weak self] auth, user in
-            self?.user = user
-            self?.isLoggedIn = user != nil
+            DispatchQueue.main.async {
+                self?.user = user
+                self?.isLoggedIn = user != nil
+            }
         }
     }
     
@@ -32,7 +36,11 @@ class AuthViewModel: ObservableObject {
                 } else if let user = result?.user {
                     self?.errorMessage = nil
                     self?.user = user
+                    self?.isLoggedIn = true
                     completion(true)  // Sign up succeeded
+
+                    // Save additional user data to Firestore
+                    self?.saveUserProfile(user: user, fullName: fullName)
                 } else {
                     self?.errorMessage = "Unknown error occurred."
                     completion(false)
@@ -48,10 +56,14 @@ class AuthViewModel: ObservableObject {
                 if let error = error {
                     self?.errorMessage = error.localizedDescription
                     completion(false)  // Login failed
-                } else {
+                } else if let user = result?.user {
                     self?.errorMessage = nil
-                    self?.user = result?.user
+                    self?.user = user
+                    self?.isLoggedIn = true
                     completion(true)  // Login succeeded
+                } else {
+                    self?.errorMessage = "Unknown error occurred."
+                    completion(false)
                 }
             }
         }
@@ -61,10 +73,35 @@ class AuthViewModel: ObservableObject {
     func logout() {
         do {
             try Auth.auth().signOut()
-            self.user = nil
-            self.isLoggedIn = false
+            DispatchQueue.main.async {
+                self.user = nil
+                self.isLoggedIn = false
+            }
         } catch let signOutError as NSError {
-            self.errorMessage = signOutError.localizedDescription
+            DispatchQueue.main.async {
+                self.errorMessage = signOutError.localizedDescription
+            }
+        }
+    }
+
+    // Save user profile to Firestore
+    private func saveUserProfile(user: User, fullName: String) {
+        let userProfile = UserProfile(
+            id: user.uid,
+            userID: user.uid, // Non-optional
+            fullName: fullName,
+            email: user.email ?? "",
+            createdAt: Date()
+        )
+        let userService = UserService()
+        Task {
+            do {
+                try await userService.createUserProfile(userProfile)
+            } catch {
+                DispatchQueue.main.async {
+                    self.errorMessage = error.localizedDescription
+                }
+            }
         }
     }
 }

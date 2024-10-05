@@ -1,76 +1,51 @@
-//
-//  BookingViewModel.swift
-//  AutoShare
-//
-//  Created by Dustin Wood on 10/5/24.
-//
-
-
-// ViewModels/BookingViewModel.swift
+// BookingViewModel.swift
 
 import Foundation
+import SwiftUI
 
+@MainActor
 class BookingViewModel: ObservableObject {
-    @Published var bookings: [Booking] = []
+    @Published var isBooking = false
     @Published var errorMessage: String?
-    @Published var isBooking: Bool = false
 
-    private let bookingService: BookingService
-    private let authViewModel: AuthViewModel
+    private let firestoreService = FirestoreService()
 
-    init(bookingService: BookingService = BookingService(), authViewModel: AuthViewModel = AuthViewModel()) {
-        self.bookingService = bookingService
-        self.authViewModel = authViewModel
+    func calculateTotalAmount(for vehicle: Vehicle, startDate: Date, endDate: Date) -> Double {
+        let rentalDays = max(Calendar.current.dateComponents([.day], from: startDate, to: endDate).day ?? 1, 1)
+        return Double(rentalDays) * vehicle.pricePerDay
     }
 
-    /// Fetches bookings for the current user.
-    func fetchBookings() {
-        Task {
-            guard let user = authViewModel.user else { return }
-            do {
-                try await bookingService.fetchBookings(for: user.uid)
-                DispatchQueue.main.async {
-                    self.bookings = self.bookingService.bookings
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    self.errorMessage = error.localizedDescription
-                }
-            }
-        }
-    }
+    func createBooking(for vehicle: Vehicle, startDate: Date, endDate: Date, userID: String) async {
+        self.isBooking = true
+        self.errorMessage = nil
+        do {
+            // Calculate total amount
+            let totalAmount = calculateTotalAmount(for: vehicle, startDate: startDate, endDate: endDate)
 
-    /// Creates a new booking.
-    func createBooking(for vehicle: Vehicle, startDate: Date, endDate: Date) {
-        Task {
-            isBooking = true
-            defer { isBooking = false }
-            guard let user = authViewModel.user else { return }
+            // Calculate rental days
+            let rentalDays = max(Calendar.current.dateComponents([.day], from: startDate, to: endDate).day ?? 1, 1)
+
+            // Create a Booking object
             let booking = Booking(
-                userID: user.uid,
-                vehicleID: vehicle.id ?? "",
+                id: nil,
+                userID: userID,
+                vehicleID: vehicle.id ?? UUID().uuidString, // Use UUID if vehicle.id is nil
                 startDate: startDate,
                 endDate: endDate,
-                totalAmount: calculateTotalAmount(for: vehicle, startDate: startDate, endDate: endDate),
+                rentalDays: rentalDays,
+                totalAmount: totalAmount,
+                status: "pending",
                 createdAt: Date()
             )
 
-            do {
-                try await bookingService.addBooking(booking)
-                DispatchQueue.main.async {
-                    self.bookings.append(booking)
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    self.errorMessage = error.localizedDescription
-                }
-            }
-        }
-    }
+            // Save booking to Firestore using FirestoreService
+            try await firestoreService.addBooking(booking: booking)
 
-    /// Calculates the total amount for the booking.
-    private func calculateTotalAmount(for vehicle: Vehicle, startDate: Date, endDate: Date) -> Double {
-        let days = Calendar.current.dateComponents([.day], from: startDate, to: endDate).day ?? 1
-        return Double(days) * vehicle.pricePerDay
+            self.isBooking = false
+            self.errorMessage = nil
+        } catch {
+            self.isBooking = false
+            self.errorMessage = error.localizedDescription
+        }
     }
 }

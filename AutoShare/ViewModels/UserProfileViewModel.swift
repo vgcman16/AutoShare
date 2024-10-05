@@ -1,11 +1,3 @@
-//
-//  UserProfileViewModel.swift
-//  AutoShare
-//
-//  Created by Dustin Wood on 10/5/24.
-//
-
-
 // ViewModels/UserProfileViewModel.swift
 
 import Foundation
@@ -48,20 +40,13 @@ class UserProfileViewModel: ObservableObject {
             defer { isSubmitting = false }
 
             guard let user = authViewModel.user else { return }
-            var updatedProfile = userProfile ?? UserProfile(
-                id: user.uid,
-                userID: user.uid,
-                fullName: fullName,
-                email: user.email ?? "",
-                createdAt: Date()
-            )
-            updatedProfile.fullName = fullName
+
+            var profileImageURL: String? = userProfile?.profileImageURL
 
             // Upload profile image if selected
             if let image = selectedImage {
                 do {
-                    let imageURL = try await ImageUploader.uploadImage(image: image, folder: "profile_images")
-                    updatedProfile.profileImageURL = imageURL
+                    profileImageURL = try await ImageUploader.uploadImage(image: image, folder: "profile_images")
                 } catch {
                     DispatchQueue.main.async {
                         self.errorMessage = error.localizedDescription
@@ -69,6 +54,16 @@ class UserProfileViewModel: ObservableObject {
                     return
                 }
             }
+
+            // Create a new UserProfile instance with the updated data
+            let updatedProfile = UserProfile(
+                id: user.uid,
+                userID: user.uid,
+                fullName: fullName,
+                email: user.email ?? "",
+                profileImageURL: profileImageURL,
+                createdAt: userProfile?.createdAt ?? Date()
+            )
 
             do {
                 try await userService.updateUserProfile(updatedProfile)
@@ -82,4 +77,5 @@ class UserProfileViewModel: ObservableObject {
             }
         }
     }
-}
+} // <-- Added missing closing brace here
+

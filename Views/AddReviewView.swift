@@ -1,5 +1,3 @@
-// Views/AddReviewView.swift
-
 import SwiftUI
 
 struct AddReviewView: View {
@@ -8,6 +6,7 @@ struct AddReviewView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var rating: Int = 5
     @State private var comment: String = ""
+    @EnvironmentObject var authViewModel: AuthViewModel // Added this line
 
     var body: some View {
         NavigationView {
@@ -36,7 +35,7 @@ struct AddReviewView: View {
                 Button(action: {
                     viewModel.submitReview(
                         vehicleID: vehicleID,
-                        userID: AuthViewModel.shared.user?.uid ?? "",
+                        userID: authViewModel.user?.uid ?? "",
                         rating: rating,
                         comment: comment
                     )

@@ -1,19 +1,26 @@
-// Views/BookingView.swift
+// BookingView.swift
 
 import SwiftUI
 
 struct BookingView: View {
+    @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = BookingViewModel()
     var vehicle: Vehicle
     @Environment(\.presentationMode) var presentationMode
+
     @State private var startDate = Date()
-    @State private var endDate = Date().addingTimeInterval(86400) // Next day
+    @State private var endDate = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
 
     var body: some View {
         NavigationView {
             Form {
                 Section(header: Text("Select Dates")) {
                     DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
+                        .onChange(of: startDate) { newValue in
+                            if endDate < startDate {
+                                endDate = Calendar.current.date(byAdding: .day, value: 1, to: startDate)!
+                            }
+                        }
                     DatePicker("End Date", selection: $endDate, in: startDate..., displayedComponents: .date)
                 }
 
@@ -29,8 +36,14 @@ struct BookingView: View {
                 }
 
                 Button(action: {
-                    viewModel.createBooking(for: vehicle, startDate: startDate, endDate: endDate)
-                    presentationMode.wrappedValue.dismiss()
+                    Task {
+                        guard let userID = authViewModel.user?.uid else {
+                            viewModel.errorMessage = "User not authenticated."
+                            return
+                        }
+                        await viewModel.createBooking(for: vehicle, startDate: startDate, endDate: endDate, userID: userID)
+                        presentationMode.wrappedValue.dismiss()
+                    }
                 }) {
                     if viewModel.isBooking {
                         ProgressView()

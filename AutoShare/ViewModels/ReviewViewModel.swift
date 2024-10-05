@@ -1,13 +1,3 @@
-//
-//  ReviewViewModel.swift
-//  AutoShare
-//
-//  Created by Dustin Wood on 10/5/24.
-//
-
-
-// ViewModels/ReviewViewModel.swift
-
 import Foundation
 
 class ReviewViewModel: ObservableObject {
@@ -44,7 +34,7 @@ class ReviewViewModel: ObservableObject {
             defer { isSubmitting = false }
             let review = Review(
                 vehicleID: vehicleID,
-                userID: userID,
+                reviewerID: userID, // Updated parameter name
                 rating: rating,
                 comment: comment,
                 date: Date()

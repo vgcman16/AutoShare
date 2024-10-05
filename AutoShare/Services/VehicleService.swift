@@ -36,11 +36,13 @@ class VehicleService: ObservableObject {
         for id in ids {
             do {
                 let document = try await db.collection("vehicles").document(id).getDocument()
-                if let vehicle = try document.data(as: Vehicle.self) {
-                    vehicles.append(vehicle)
+                guard document.exists else {
+                    throw AppError.databaseError("Vehicle with ID \(id) does not exist.")
                 }
+                let vehicle = try document.data(as: Vehicle.self)
+                vehicles.append(vehicle)
             } catch {
-                throw AppError.databaseError("Failed to fetch vehicle with ID \(id): \(error.localizedDescription)")
+                throw AppError.databaseError("Failed to fetch or decode vehicle with ID \(id): \(error.localizedDescription)")
             }
         }
         return vehicles
