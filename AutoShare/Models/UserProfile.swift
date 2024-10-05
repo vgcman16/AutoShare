@@ -1,16 +1,28 @@
+// Models/UserProfile.swift
+
 import Foundation
 import FirebaseFirestoreSwift
 
 struct UserProfile: Identifiable, Codable {
     @DocumentID var id: String?
-    var userID: String? // Make userID optional to handle cases where it might be missing
+    var userID: String?
     var fullName: String
     var email: String
     var driverLicenseURL: String?
     var profileImageURL: String?
     var phoneNumber: String?
     var createdAt: Date
-    
-    // Optional: Additional fields can be added here as needed
-}
+    var favorites: [String] = [] // Array of vehicle IDs
 
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userID
+        case fullName
+        case email
+        case driverLicenseURL
+        case profileImageURL
+        case phoneNumber
+        case createdAt
+        case favorites
+    }
+}
