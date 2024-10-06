@@ -5,24 +5,20 @@ import Firebase
 
 @main
 struct AutoShareApp: App {
-    @StateObject var userService = UserService() // Initialize UserService
-    @StateObject var authViewModel = AuthViewModel() // Initialize AuthViewModel
-    @StateObject var firestoreService = FirestoreService()
-    @StateObject var reviewService = ReviewService()
-    // ... Initialize other services as needed
-    
+    @StateObject private var firestoreService = FirestoreService()
+    @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var vehicleService = VehicleService()
+
     init() {
         FirebaseApp.configure()
     }
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(userService)
-                .environmentObject(authViewModel)
                 .environmentObject(firestoreService)
-                .environmentObject(reviewService)
-                // ... Inject other services as needed
+                .environmentObject(authViewModel)
+                .environmentObject(vehicleService)
         }
     }
 }

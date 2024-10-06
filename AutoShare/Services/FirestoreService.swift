@@ -3,8 +3,10 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import Combine
 
 /// Service class to handle all Firestore-related operations.
+@MainActor // Ensures all published properties are updated on the main thread
 class FirestoreService: ObservableObject {
     // MARK: - Properties
     
@@ -38,10 +40,8 @@ class FirestoreService: ObservableObject {
     
     /// Fetches all available vehicles (year 2017 and newer) from Firestore.
     func fetchAvailableVehicles() async {
-        await MainActor.run {
-            self.isLoading = true
-            self.errorMessage = nil
-        }
+        isLoading = true
+        errorMessage = nil
         do {
             let snapshot = try await db.collection("vehicles")
                 .whereField("isAvailable", isEqualTo: true)
@@ -49,19 +49,15 @@ class FirestoreService: ObservableObject {
                 .order(by: "createdAt", descending: true)
                 .getDocuments()
             
-            let fetchedVehicles = snapshot.documents.compactMap { document in
-                try? document.data(as: Vehicle.self)
+            let fetchedVehicles = try snapshot.documents.map { document in
+                try document.data(as: Vehicle.self)
             }
             
-            await MainActor.run {
-                self.vehicles = fetchedVehicles
-                self.isLoading = false
-            }
+            vehicles = fetchedVehicles
+            isLoading = false
         } catch {
-            await MainActor.run {
-                self.errorMessage = "Error fetching vehicles: \(error.localizedDescription)"
-                self.isLoading = false
-            }
+            errorMessage = "Error fetching vehicles: \(error.localizedDescription)"
+            isLoading = false
         }
     }
     
@@ -69,9 +65,9 @@ class FirestoreService: ObservableObject {
     /// - Parameter vehicle: The `Vehicle` object to be added.
     func addVehicle(vehicle: Vehicle) async throws {
         do {
-            _ = try await db.collection("vehicles").addDocument(from: vehicle)
+            try await db.collection("vehicles").addDocument(from: vehicle)
         } catch {
-            throw error // Propagate the original error
+            throw NSError(domain: "FirestoreService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Error adding vehicle: \(error.localizedDescription)"])
         }
     }
     
@@ -85,7 +81,7 @@ class FirestoreService: ObservableObject {
         do {
             try await db.collection("vehicles").document(vehicleID).setData(from: vehicle)
         } catch {
-            throw error // Propagate the original error
+            throw NSError(domain: "FirestoreService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Error updating vehicle: \(error.localizedDescription)"])
         }
     }
     
@@ -113,7 +109,7 @@ class FirestoreService: ObservableObject {
                 return nil
             }
         } catch {
-            throw error // Propagate the original error
+            throw NSError(domain: "FirestoreService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Error deleting vehicle and its reviews: \(error.localizedDescription)"])
         }
     }
     
@@ -122,29 +118,23 @@ class FirestoreService: ObservableObject {
     /// Fetches reviews for a specific vehicle from Firestore.
     /// - Parameter vehicleID: The ID of the vehicle.
     func fetchReviews(for vehicleID: String) async {
-        await MainActor.run {
-            self.isLoading = true
-            self.errorMessage = nil
-        }
+        isLoading = true
+        errorMessage = nil
         do {
             let snapshot = try await db.collection("reviews")
                 .whereField("vehicleID", isEqualTo: vehicleID)
                 .order(by: "createdAt", descending: true)
                 .getDocuments()
             
-            let fetchedReviews = snapshot.documents.compactMap { document in
-                try? document.data(as: Review.self)
+            let fetchedReviews = try snapshot.documents.map { document in
+                try document.data(as: Review.self)
             }
             
-            await MainActor.run {
-                self.reviews = fetchedReviews
-                self.isLoading = false
-            }
+            reviews = fetchedReviews
+            isLoading = false
         } catch {
-            await MainActor.run {
-                self.errorMessage = "Error fetching reviews: \(error.localizedDescription)"
-                self.isLoading = false
-            }
+            errorMessage = "Error fetching reviews: \(error.localizedDescription)"
+            isLoading = false
         }
     }
     
@@ -152,9 +142,9 @@ class FirestoreService: ObservableObject {
     /// - Parameter review: The `Review` object to be added.
     func addReview(review: Review) async throws {
         do {
-            _ = try await db.collection("reviews").addDocument(from: review)
+            try await db.collection("reviews").addDocument(from: review)
         } catch {
-            throw error // Propagate the original error
+            throw NSError(domain: "FirestoreService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Error adding review: \(error.localizedDescription)"])
         }
     }
     
@@ -168,7 +158,7 @@ class FirestoreService: ObservableObject {
         do {
             try await db.collection("reviews").document(reviewID).delete()
         } catch {
-            throw error // Propagate the original error
+            throw NSError(domain: "FirestoreService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Error deleting review: \(error.localizedDescription)"])
         }
     }
     
@@ -178,10 +168,8 @@ class FirestoreService: ObservableObject {
     /// - Parameter userID: The ID of the user.
     /// - Returns: The fetched `UserProfile` object.
     func fetchUserProfile(for userID: String) async throws -> UserProfile {
-        await MainActor.run {
-            self.isLoading = true
-            self.errorMessage = nil
-        }
+        isLoading = true
+        errorMessage = nil
         do {
             let document = try await db.collection("users").document(userID).getDocument()
             
@@ -190,17 +178,13 @@ class FirestoreService: ObservableObject {
             }
             
             let profile = try document.data(as: UserProfile.self)
-            await MainActor.run {
-                self.userProfile = profile
-                self.isLoading = false
-            }
+            userProfile = profile
+            isLoading = false
             return profile
         } catch {
-            await MainActor.run {
-                self.errorMessage = "Error fetching user profile: \(error.localizedDescription)"
-                self.isLoading = false
-            }
-            throw error // Propagate the original error
+            errorMessage = "Error fetching user profile: \(error.localizedDescription)"
+            isLoading = false
+            throw NSError(domain: "FirestoreService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Error fetching user profile: \(error.localizedDescription)"])
         }
     }
     
@@ -211,11 +195,9 @@ class FirestoreService: ObservableObject {
         
         do {
             try await db.collection("users").document(userID).setData(from: profile, merge: true)
-            await MainActor.run {
-                self.userProfile = profile
-            }
+            userProfile = profile
         } catch {
-            throw error // Propagate the original error
+            throw NSError(domain: "FirestoreService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Error updating user profile: \(error.localizedDescription)"])
         }
     }
     
@@ -224,29 +206,23 @@ class FirestoreService: ObservableObject {
     /// Fetches bookings for a specific user from Firestore.
     /// - Parameter userID: The ID of the user.
     func fetchBookings(for userID: String) async {
-        await MainActor.run {
-            self.isLoading = true
-            self.errorMessage = nil
-        }
+        isLoading = true
+        errorMessage = nil
         do {
             let snapshot = try await db.collection("bookings")
                 .whereField("userID", isEqualTo: userID)
                 .order(by: "createdAt", descending: true)
                 .getDocuments()
             
-            let fetchedBookings = snapshot.documents.compactMap { document in
-                try? document.data(as: Booking.self)
+            let fetchedBookings = try snapshot.documents.map { document in
+                try document.data(as: Booking.self)
             }
             
-            await MainActor.run {
-                self.bookings = fetchedBookings
-                self.isLoading = false
-            }
+            bookings = fetchedBookings
+            isLoading = false
         } catch {
-            await MainActor.run {
-                self.errorMessage = "Error fetching bookings: \(error.localizedDescription)"
-                self.isLoading = false
-            }
+            errorMessage = "Error fetching bookings: \(error.localizedDescription)"
+            isLoading = false
         }
     }
     
@@ -254,9 +230,9 @@ class FirestoreService: ObservableObject {
     /// - Parameter booking: The `Booking` object to be added.
     func addBooking(booking: Booking) async throws {
         do {
-            _ = try await db.collection("bookings").addDocument(from: booking)
+            try await db.collection("bookings").addDocument(from: booking)
         } catch {
-            throw error // Propagate the original error
+            throw NSError(domain: "FirestoreService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Error adding booking: \(error.localizedDescription)"])
         }
     }
     
@@ -265,29 +241,23 @@ class FirestoreService: ObservableObject {
     /// Fetches transactions for a specific user from Firestore.
     /// - Parameter userID: The ID of the user.
     func fetchTransactions(for userID: String) async {
-        await MainActor.run {
-            self.isLoading = true
-            self.errorMessage = nil
-        }
+        isLoading = true
+        errorMessage = nil
         do {
             let snapshot = try await db.collection("transactions")
                 .whereField("userID", isEqualTo: userID)
                 .order(by: "createdAt", descending: true)
                 .getDocuments()
             
-            let fetchedTransactions = snapshot.documents.compactMap { document in
-                try? document.data(as: Transaction.self)
+            let fetchedTransactions = try snapshot.documents.map { document in
+                try document.data(as: Transaction.self)
             }
             
-            await MainActor.run {
-                self.transactions = fetchedTransactions
-                self.isLoading = false
-            }
+            transactions = fetchedTransactions
+            isLoading = false
         } catch {
-            await MainActor.run {
-                self.errorMessage = "Error fetching transactions: \(error.localizedDescription)"
-                self.isLoading = false
-            }
+            errorMessage = "Error fetching transactions: \(error.localizedDescription)"
+            isLoading = false
         }
     }
     
@@ -295,9 +265,9 @@ class FirestoreService: ObservableObject {
     /// - Parameter transaction: The `Transaction` object to be added.
     func addTransaction(transaction: Transaction) async throws {
         do {
-            _ = try await db.collection("transactions").addDocument(from: transaction)
+            try await db.collection("transactions").addDocument(from: transaction)
         } catch {
-            throw error // Propagate the original error
+            throw NSError(domain: "FirestoreService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Error adding transaction: \(error.localizedDescription)"])
         }
     }
 }

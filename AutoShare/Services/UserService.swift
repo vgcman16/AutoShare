@@ -26,9 +26,8 @@ class UserService: ObservableObject {
         do {
             let document = try await db.collection("users").document(userID).getDocument()
             
-            guard let profile = try document.data(as: UserProfile.self) else {
-                throw AppError.databaseError("User profile not found.")
-            }
+            // Directly assign the result since data(as:) does not return an optional
+            let profile = try document.data(as: UserProfile.self)
             
             DispatchQueue.main.async {
                 self.userProfile = profile

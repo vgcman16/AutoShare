@@ -1,61 +1,57 @@
 // ViewModels/VehicleDetailViewModel.swift
 
 import Foundation
+import Combine
 
-/// ViewModel for VehicleDetailView, managing favorite status and related operations.
 class VehicleDetailViewModel: ObservableObject {
-    // MARK: - Published Properties
-
     @Published var isFavorite: Bool = false
     @Published var errorMessage: String?
-    
-    // MARK: - Properties
+    @Published var isLoading: Bool = false
 
-    private let userService: UserService
-    private let authViewModel: AuthViewModel
-    
-    // MARK: - Initializer
+    var userService: UserService?
+    var authViewModel: AuthViewModel?
+    let vehicle: Vehicle
 
-    init(vehicle: Vehicle, userService: UserService, authViewModel: AuthViewModel) {
-        self.userService = userService
-        self.authViewModel = authViewModel
-        checkIfFavorite(for: vehicle)
+    // Initialize with only vehicle
+    init(vehicle: Vehicle) {
+        self.vehicle = vehicle
     }
-    
-    // MARK: - Methods
 
     /// Checks if the vehicle is in the user's favorites.
-    /// - Parameter vehicle: The vehicle to check.
     func checkIfFavorite(for vehicle: Vehicle) {
-        guard let userProfile = userService.userProfile else { return }
+        guard let userProfile = userService?.userProfile else { return }
         isFavorite = userProfile.favorites.contains(vehicle.id ?? "")
     }
-    
+
     /// Toggles the favorite status of the vehicle.
-    /// - Parameter vehicle: The vehicle to toggle.
     func toggleFavorite(for vehicle: Vehicle) {
-        Task {
-            guard let user = authViewModel.user else {
-                DispatchQueue.main.async {
-                    self.errorMessage = "User not authenticated."
-                }
-                return
+        guard let user = authViewModel?.user else {
+            DispatchQueue.main.async {
+                self.errorMessage = "User not authenticated."
             }
+            return
+        }
+
+        isLoading = true
+        Task {
             do {
                 if isFavorite {
-                    try await userService.removeVehicleFromFavorites(userID: user.uid, vehicleID: vehicle.id ?? "")
+                    try await userService?.removeVehicleFromFavorites(userID: user.uid, vehicleID: vehicle.id ?? "")
                     DispatchQueue.main.async {
                         self.isFavorite = false
+                        self.isLoading = false
                     }
                 } else {
-                    try await userService.addVehicleToFavorites(userID: user.uid, vehicleID: vehicle.id ?? "")
+                    try await userService?.addVehicleToFavorites(userID: user.uid, vehicleID: vehicle.id ?? "")
                     DispatchQueue.main.async {
                         self.isFavorite = true
+                        self.isLoading = false
                     }
                 }
             } catch {
                 DispatchQueue.main.async {
                     self.errorMessage = error.localizedDescription
+                    self.isLoading = false
                 }
             }
         }

@@ -1,3 +1,5 @@
+// Views/AddVehicleView.swift
+
 import SwiftUI
 
 struct AddVehicleView: View {
@@ -46,7 +48,7 @@ struct AddVehicleView: View {
                 .background(Color(.secondarySystemBackground))
                 .cornerRadius(8)
 
-            // Image Picker
+            // Image Picker Button
             Button(action: {
                 self.showingImagePicker = true
             }) {
@@ -101,12 +103,24 @@ struct AddVehicleView: View {
             Spacer()
         }
         .padding()
+        .alert(isPresented: Binding<Bool>(
+            get: { errorMessage != nil },
+            set: { _ in errorMessage = nil }
+        )) {
+            Alert(
+                title: Text("Error"),
+                message: Text(errorMessage ?? "An unknown error occurred."),
+                dismissButton: .default(Text("OK"))
+            )
+        }
     }
 
     func submitVehicle() {
         Task {
             guard let user = authViewModel.user else {
-                errorMessage = "User not authenticated."
+                await MainActor.run {
+                    errorMessage = "User not authenticated."
+                }
                 return
             }
 
@@ -116,12 +130,16 @@ struct AddVehicleView: View {
                   vehicleYear >= 2017,
                   let price = Double(pricePerDay),
                   !location.isEmpty else {
-                errorMessage = "Please fill in all fields correctly. Ensure the year is 2017 or newer."
+                await MainActor.run {
+                    errorMessage = "Please fill in all fields correctly. Ensure the year is 2017 or newer."
+                }
                 return
             }
 
             guard let imageToUpload = selectedImage else {
-                errorMessage = "Please upload a vehicle image."
+                await MainActor.run {
+                    errorMessage = "Please upload a vehicle image."
+                }
                 return
             }
 
@@ -134,8 +152,7 @@ struct AddVehicleView: View {
 
                 // Create vehicle object
                 let vehicle = Vehicle(
-                    id: nil,
-                    ownerID: user.uid,
+                    ownerID: user.uid, // Correctly pass ownerID
                     make: make,
                     model: model,
                     year: vehicleYear,
@@ -149,7 +166,8 @@ struct AddVehicleView: View {
                 // Save vehicle to Firestore
                 try await firestoreService.addVehicle(vehicle: vehicle)
 
-                DispatchQueue.main.async {
+                // Clear the form on the main thread
+                await MainActor.run {
                     isSubmitting = false
                     // Vehicle added successfully
                     print("Vehicle listed successfully.")
@@ -162,7 +180,7 @@ struct AddVehicleView: View {
                     selectedImage = nil
                 }
             } catch {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     isSubmitting = false
                     errorMessage = error.localizedDescription
                 }
@@ -170,4 +188,3 @@ struct AddVehicleView: View {
         }
     }
 }
-

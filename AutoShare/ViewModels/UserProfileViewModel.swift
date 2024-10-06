@@ -3,6 +3,7 @@
 import Foundation
 import UIKit
 
+@MainActor
 class UserProfileViewModel: ObservableObject {
     @Published var userProfile: UserProfile?
     @Published var errorMessage: String?
@@ -11,7 +12,8 @@ class UserProfileViewModel: ObservableObject {
     private let userService: UserService
     private let authViewModel: AuthViewModel
 
-    init(userService: UserService = UserService(), authViewModel: AuthViewModel = AuthViewModel()) {
+    // Remove default parameters to enforce dependency injection
+    init(userService: UserService, authViewModel: AuthViewModel) {
         self.userService = userService
         self.authViewModel = authViewModel
     }
@@ -19,16 +21,16 @@ class UserProfileViewModel: ObservableObject {
     /// Fetches the user profile.
     func fetchUserProfile() {
         Task {
-            guard let user = authViewModel.user else { return }
+            // Accessing 'user' directly without 'await' since it's a synchronous property
+            guard let user = authViewModel.user else {
+                self.errorMessage = "User not authenticated."
+                return
+            }
             do {
                 let profile = try await userService.fetchUserProfile(for: user.uid)
-                DispatchQueue.main.async {
-                    self.userProfile = profile
-                }
+                self.userProfile = profile
             } catch {
-                DispatchQueue.main.async {
-                    self.errorMessage = error.localizedDescription
-                }
+                self.errorMessage = error.localizedDescription
             }
         }
     }
@@ -36,21 +38,23 @@ class UserProfileViewModel: ObservableObject {
     /// Updates the user profile.
     func updateUserProfile(fullName: String, selectedImage: UIImage?) {
         Task {
-            isSubmitting = true
-            defer { isSubmitting = false }
+            self.isSubmitting = true
+            defer { self.isSubmitting = false }
 
-            guard let user = authViewModel.user else { return }
+            // Accessing 'user' directly without 'await' since it's a synchronous property
+            guard let user = authViewModel.user else {
+                self.errorMessage = "User not authenticated."
+                return
+            }
 
-            var profileImageURL: String? = userProfile?.profileImageURL
+            var profileImageURL: String? = self.userProfile?.profileImageURL
 
             // Upload profile image if selected
             if let image = selectedImage {
                 do {
                     profileImageURL = try await ImageUploader.uploadImage(image: image, folder: "profile_images")
                 } catch {
-                    DispatchQueue.main.async {
-                        self.errorMessage = error.localizedDescription
-                    }
+                    self.errorMessage = error.localizedDescription
                     return
                 }
             }
@@ -62,20 +66,15 @@ class UserProfileViewModel: ObservableObject {
                 fullName: fullName,
                 email: user.email ?? "",
                 profileImageURL: profileImageURL,
-                createdAt: userProfile?.createdAt ?? Date()
+                createdAt: self.userProfile?.createdAt ?? Date()
             )
 
             do {
                 try await userService.updateUserProfile(updatedProfile)
-                DispatchQueue.main.async {
-                    self.userProfile = updatedProfile
-                }
+                self.userProfile = updatedProfile
             } catch {
-                DispatchQueue.main.async {
-                    self.errorMessage = error.localizedDescription
-                }
+                self.errorMessage = error.localizedDescription
             }
         }
     }
-} // <-- Added missing closing brace here
-
+}

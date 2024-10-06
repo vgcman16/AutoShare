@@ -2,18 +2,19 @@
 
 import Foundation
 
-enum AppError: LocalizedError {
+enum AppError: Error, LocalizedError {
     case databaseError(String)
     case validationError(String)
-    case networkError(String) // Added networkError case
-    
+    case authenticationError(String)
+    case imageUploadError(String)
+    // Add other custom error cases as needed
+
     var errorDescription: String? {
         switch self {
-        case .databaseError(let message):
-            return message
-        case .validationError(let message):
-            return message
-        case .networkError(let message):
+        case .databaseError(let message),
+             .validationError(let message),
+             .authenticationError(let message),
+             .imageUploadError(let message):
             return message
         }
     }
