@@ -3,6 +3,7 @@
 import Foundation
 import Combine
 
+@MainActor
 class VehicleDetailViewModel: ObservableObject {
     @Published var isFavorite: Bool = false
     @Published var errorMessage: String?
@@ -26,9 +27,7 @@ class VehicleDetailViewModel: ObservableObject {
     /// Toggles the favorite status of the vehicle.
     func toggleFavorite(for vehicle: Vehicle) {
         guard let user = authViewModel?.user else {
-            DispatchQueue.main.async {
-                self.errorMessage = "User not authenticated."
-            }
+            self.errorMessage = "User not authenticated."
             return
         }
 
@@ -37,22 +36,16 @@ class VehicleDetailViewModel: ObservableObject {
             do {
                 if isFavorite {
                     try await userService?.removeVehicleFromFavorites(userID: user.uid, vehicleID: vehicle.id ?? "")
-                    DispatchQueue.main.async {
-                        self.isFavorite = false
-                        self.isLoading = false
-                    }
+                    self.isFavorite = false
+                    self.isLoading = false
                 } else {
                     try await userService?.addVehicleToFavorites(userID: user.uid, vehicleID: vehicle.id ?? "")
-                    DispatchQueue.main.async {
-                        self.isFavorite = true
-                        self.isLoading = false
-                    }
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    self.errorMessage = error.localizedDescription
+                    self.isFavorite = true
                     self.isLoading = false
                 }
+            } catch {
+                self.errorMessage = error.localizedDescription
+                self.isLoading = false
             }
         }
     }

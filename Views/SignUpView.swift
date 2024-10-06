@@ -1,9 +1,4 @@
-//
-//  SignUpView.swift
-//  AutoShare
-//
-//  Created by Dustin Wood on 10/4/24.
-//
+// Views/SignUpView.swift
 
 import SwiftUI
 
@@ -15,7 +10,7 @@ struct SignUpView: View {
     @State private var confirmPassword: String = ""
     @State private var isLoading: Bool = false
     @State private var showErrorAlert: Bool = false
-    
+
     var body: some View {
         VStack(spacing: 20) {
             Text("Create Account")
@@ -72,7 +67,11 @@ struct SignUpView: View {
             }
             .disabled(isLoading)
             .alert(isPresented: $showErrorAlert) {
-                Alert(title: Text("Sign Up Failed"), message: Text(authViewModel.errorMessage ?? "Unknown error"), dismissButton: .default(Text("OK")))
+                Alert(
+                    title: Text("Sign Up Failed"),
+                    message: Text(authViewModel.errorMessage ?? "Unknown error"),
+                    dismissButton: .default(Text("OK"))
+                )
             }
         }
         .padding()
@@ -81,16 +80,19 @@ struct SignUpView: View {
     func signUp() {
         guard !fullName.isEmpty, !email.isEmpty, !password.isEmpty, !confirmPassword.isEmpty else {
             authViewModel.errorMessage = "All fields are required."
+            showErrorAlert = true
             return
         }
         
         guard password == confirmPassword else {
             authViewModel.errorMessage = "Passwords do not match."
+            showErrorAlert = true
             return
         }
         
         guard password.count >= 6 else {
             authViewModel.errorMessage = "Password must be at least 6 characters long."
+            showErrorAlert = true
             return
         }
         

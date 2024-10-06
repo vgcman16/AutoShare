@@ -1,14 +1,7 @@
-//
-//  HomeView.swift
-//  AutoShare
-//
-//  Created by Dustin Wood on 10/4/24.
-//
-
-
-// HomeView.swift
+// Views/HomeView.swift
 
 import SwiftUI
+import Kingfisher
 
 struct HomeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
@@ -78,7 +71,12 @@ struct HomeView: View {
                 Spacer()
                 
                 Button(action: {
-                    authViewModel.logout()
+                    do {
+                        try authViewModel.signOut()
+                    } catch {
+                        // Handle sign-out error appropriately
+                        print("Error signing out: \(error.localizedDescription)")
+                    }
                 }) {
                     Text("Logout")
                         .foregroundColor(.white)

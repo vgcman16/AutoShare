@@ -40,12 +40,13 @@ struct VehicleRow_Previews: PreviewProvider {
     static var previews: some View {
         let exampleVehicle = Vehicle(
             id: "vehicle123",
+            ownerID: "owner123",
             make: "Toyota",
             model: "Camry",
             year: 2020,
+            pricePerDay: 50.0, // <-- Moved 'pricePerDay' before 'location'
             location: "New York",
             imageURL: "https://example.com/image.jpg",
-            pricePerDay: 50.0,
             isAvailable: true,
             createdAt: Date()
         )

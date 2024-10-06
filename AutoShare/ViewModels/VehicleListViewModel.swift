@@ -53,7 +53,7 @@ class VehicleListViewModel: ObservableObject {
             filteredVehicles = vehicles.filter { vehicle in
                 vehicle.make.localizedCaseInsensitiveContains(text) ||
                 vehicle.model.localizedCaseInsensitiveContains(text) ||
-                vehicle.location.localizedCaseInsensitiveContains(text)
+                (vehicle.location?.localizedCaseInsensitiveContains(text) ?? false)
             }
         }
     }

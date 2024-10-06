@@ -4,9 +4,17 @@ import SwiftUI
 import Kingfisher
 
 struct UserProfileView: View {
-    @StateObject private var viewModel = UserProfileViewModel()
+    @EnvironmentObject var userService: UserService
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @StateObject private var viewModel: UserProfileViewModel
     @State private var showingImagePicker = false
     @State private var selectedImage: UIImage?
+
+    init() {
+        // Initialize the view model with injected services
+        // Note: EnvironmentObjects are not accessible in the initializer, so we use a temporary initializer
+        _viewModel = StateObject(wrappedValue: UserProfileViewModel(userService: UserService(), authViewModel: AuthViewModel()))
+    }
 
     var body: some View {
         NavigationView {
@@ -92,6 +100,7 @@ struct UserProfileView: View {
             .padding()
             .navigationTitle("My Profile")
             .onAppear {
+                // Fetch user profile
                 viewModel.fetchUserProfile()
             }
         }

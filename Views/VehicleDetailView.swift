@@ -94,7 +94,7 @@ struct VehicleDetailView: View {
             .disabled(viewModel.isLoading)
 
             // Error Message
-            if let errorMessage = viewModel.errorMessage {
+            if let errorMessage = viewModel.errorMessage { // Now optional
                 Text(errorMessage)
                     .foregroundColor(.red)
                     .padding()
@@ -126,12 +126,13 @@ struct VehicleDetailView_Previews: PreviewProvider {
     static var previews: some View {
         let exampleVehicle = Vehicle(
             id: "vehicle123",
+            ownerID: "owner123", // Correctly added
             make: "Toyota",
             model: "Camry",
             year: 2020,
+            pricePerDay: 50.0, // Moved before 'location'
             location: "New York",
             imageURL: "https://example.com/image.jpg",
-            pricePerDay: 50.0,
             isAvailable: true,
             createdAt: Date()
         )

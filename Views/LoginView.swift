@@ -1,3 +1,5 @@
+// Views/LoginView.swift
+
 import SwiftUI
 
 struct LoginView: View {
@@ -6,7 +8,7 @@ struct LoginView: View {
     @State private var password: String = ""
     @State private var isLoading: Bool = false
     @State private var showErrorAlert: Bool = false
-    
+
     var body: some View {
         VStack(spacing: 20) {
             Text("Welcome Back!")
@@ -54,7 +56,11 @@ struct LoginView: View {
         }
         .padding()
         .alert(isPresented: $showErrorAlert) {
-            Alert(title: Text("Login Failed"), message: Text(authViewModel.errorMessage ?? "Unknown error"), dismissButton: .default(Text("OK")))
+            Alert(
+                title: Text("Login Failed"),
+                message: Text(authViewModel.errorMessage ?? "Unknown error"),
+                dismissButton: .default(Text("OK"))
+            )
         }
     }
     
@@ -62,6 +68,7 @@ struct LoginView: View {
     func login() {
         guard !email.isEmpty, !password.isEmpty else {
             authViewModel.errorMessage = "Please enter both email and password."
+            showErrorAlert = true
             return
         }
         

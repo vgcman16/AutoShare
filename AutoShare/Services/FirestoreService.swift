@@ -36,6 +36,9 @@ class FirestoreService: ObservableObject {
     /// Indicates whether a Firestore operation is in progress.
     @Published var isLoading: Bool = false
     
+    /// Mock reviews for SwiftUI previews and testing.
+    var mockReviews: [Review] = []
+    
     // MARK: - Vehicles Operations
     
     /// Fetches all available vehicles (year 2017 and newer) from Firestore.
@@ -117,10 +120,17 @@ class FirestoreService: ObservableObject {
     
     /// Fetches reviews for a specific vehicle from Firestore.
     /// - Parameter vehicleID: The ID of the vehicle.
-    func fetchReviews(for vehicleID: String) async {
+    func fetchReviews(for vehicleID: String) async throws -> [Review] {
         isLoading = true
         errorMessage = nil
         do {
+            // If mockReviews are set (e.g., in previews), return them instead of fetching from Firestore
+            if !mockReviews.isEmpty {
+                reviews = mockReviews.sorted(by: { $0.createdAt > $1.createdAt })
+                isLoading = false
+                return reviews
+            }
+            
             let snapshot = try await db.collection("reviews")
                 .whereField("vehicleID", isEqualTo: vehicleID)
                 .order(by: "createdAt", descending: true)
@@ -130,11 +140,13 @@ class FirestoreService: ObservableObject {
                 try document.data(as: Review.self)
             }
             
-            reviews = fetchedReviews
+            reviews = fetchedReviews.sorted(by: { $0.createdAt > $1.createdAt })
             isLoading = false
+            return reviews
         } catch {
             errorMessage = "Error fetching reviews: \(error.localizedDescription)"
             isLoading = false
+            throw NSError(domain: "FirestoreService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Error fetching reviews: \(error.localizedDescription)"])
         }
     }
     
@@ -205,7 +217,7 @@ class FirestoreService: ObservableObject {
     
     /// Fetches bookings for a specific user from Firestore.
     /// - Parameter userID: The ID of the user.
-    func fetchBookings(for userID: String) async {
+    func fetchBookings(for userID: String) async throws -> [Booking] {
         isLoading = true
         errorMessage = nil
         do {
@@ -220,9 +232,11 @@ class FirestoreService: ObservableObject {
             
             bookings = fetchedBookings
             isLoading = false
+            return bookings
         } catch {
             errorMessage = "Error fetching bookings: \(error.localizedDescription)"
             isLoading = false
+            throw NSError(domain: "FirestoreService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Error fetching bookings: \(error.localizedDescription)"])
         }
     }
     
@@ -240,7 +254,7 @@ class FirestoreService: ObservableObject {
     
     /// Fetches transactions for a specific user from Firestore.
     /// - Parameter userID: The ID of the user.
-    func fetchTransactions(for userID: String) async {
+    func fetchTransactions(for userID: String) async throws -> [Transaction] {
         isLoading = true
         errorMessage = nil
         do {
@@ -255,9 +269,11 @@ class FirestoreService: ObservableObject {
             
             transactions = fetchedTransactions
             isLoading = false
+            return transactions
         } catch {
             errorMessage = "Error fetching transactions: \(error.localizedDescription)"
             isLoading = false
+            throw NSError(domain: "FirestoreService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Error fetching transactions: \(error.localizedDescription)"])
         }
     }
     

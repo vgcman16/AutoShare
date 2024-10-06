@@ -12,7 +12,7 @@ class UserProfileViewModel: ObservableObject {
     private let userService: UserService
     private let authViewModel: AuthViewModel
 
-    // Remove default parameters to enforce dependency injection
+    // Removed default parameters to enforce dependency injection
     init(userService: UserService, authViewModel: AuthViewModel) {
         self.userService = userService
         self.authViewModel = authViewModel
@@ -21,7 +21,7 @@ class UserProfileViewModel: ObservableObject {
     /// Fetches the user profile.
     func fetchUserProfile() {
         Task {
-            // Accessing 'user' directly without 'await' since it's a synchronous property
+            // Accessing 'user' directly since it's a synchronous property
             guard let user = authViewModel.user else {
                 self.errorMessage = "User not authenticated."
                 return
@@ -41,7 +41,7 @@ class UserProfileViewModel: ObservableObject {
             self.isSubmitting = true
             defer { self.isSubmitting = false }
 
-            // Accessing 'user' directly without 'await' since it's a synchronous property
+            // Accessing 'user' directly since it's a synchronous property
             guard let user = authViewModel.user else {
                 self.errorMessage = "User not authenticated."
                 return

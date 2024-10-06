@@ -10,8 +10,8 @@ struct Vehicle: Codable, Identifiable {
     var model: String
     var year: Int
     var pricePerDay: Double
-    var location: String
-    var imageURL: String
+    var location: String?
+    var imageURL: String?
     var isAvailable: Bool
     var createdAt: Date
 
@@ -22,8 +22,8 @@ struct Vehicle: Codable, Identifiable {
          model: String,
          year: Int,
          pricePerDay: Double,
-         location: String,
-         imageURL: String,
+         location: String? = nil,
+         imageURL: String? = nil,
          isAvailable: Bool = true,
          createdAt: Date = Date()) {
         self.id = id
