@@ -1,11 +1,3 @@
-//
-//  VehicleListViewModel.swift
-//  AutoShare
-//
-//  Created by Dustin Wood on 10/5/24.
-//
-
-
 // ViewModels/VehicleListViewModel.swift
 
 import Foundation
@@ -16,15 +8,15 @@ class VehicleListViewModel: ObservableObject {
     @Published var filteredVehicles: [Vehicle] = []
     @Published var searchText: String = ""
     @Published var errorMessage: String?
-
+    
     private let vehicleService: VehicleService
     private var cancellables = Set<AnyCancellable>()
-
+    
     init(vehicleService: VehicleService = VehicleService()) {
         self.vehicleService = vehicleService
         setupBindings()
     }
-
+    
     /// Sets up bindings for search text changes.
     private func setupBindings() {
         $searchText
@@ -35,7 +27,7 @@ class VehicleListViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-
+    
     /// Fetches available vehicles from the service.
     func fetchVehicles() {
         Task {
@@ -52,7 +44,7 @@ class VehicleListViewModel: ObservableObject {
             }
         }
     }
-
+    
     /// Filters vehicles based on the search text.
     private func filterVehicles(by text: String) {
         if text.isEmpty {

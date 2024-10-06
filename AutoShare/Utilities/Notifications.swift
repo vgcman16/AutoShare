@@ -1,7 +1,8 @@
-//
-//  Untitled.swift
-//  AutoShare
-//
-//  Created by Dustin Wood on 10/5/24.
-//
+// Utilities/Notifications.swift
 
+import Foundation
+
+extension NSNotification.Name {
+    static let reviewAdded = NSNotification.Name("reviewAdded")
+    // Add other custom notifications here as needed
+}

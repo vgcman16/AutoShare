@@ -5,7 +5,7 @@ import FirebaseFirestoreSwift
 
 struct UserProfile: Identifiable, Codable {
     @DocumentID var id: String?
-    var userID: String // Ensure this is non-optional
+    var userID: String // Non-optional
     var fullName: String
     var email: String
     var driverLicenseURL: String?
@@ -13,7 +13,7 @@ struct UserProfile: Identifiable, Codable {
     var phoneNumber: String?
     var createdAt: Date
     var favorites: [String] = [] // Array of vehicle IDs
-
+    
     enum CodingKeys: String, CodingKey {
         case id
         case userID
@@ -39,4 +39,3 @@ struct UserProfile: Identifiable, Codable {
         favorites: []
     )
 }
-
