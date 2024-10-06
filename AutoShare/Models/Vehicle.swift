@@ -1,5 +1,3 @@
-// Models/Vehicle.swift
-
 import Foundation
 import FirebaseFirestoreSwift
 
@@ -37,4 +35,18 @@ struct Vehicle: Codable, Identifiable {
         self.isAvailable = isAvailable
         self.createdAt = createdAt
     }
+
+    // Static example property for previews and testing purposes
+    static let example = Vehicle(
+        id: "vehicle123",
+        ownerID: "owner123",
+        make: "Toyota",
+        model: "Camry",
+        year: 2020,
+        pricePerDay: 50.0,
+        location: "New York",
+        imageURL: "https://example.com/image.jpg",
+        isAvailable: true,
+        createdAt: Date()
+    )
 }

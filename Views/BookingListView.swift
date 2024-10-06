@@ -1,5 +1,3 @@
-// Views/BookingListView.swift
-
 import SwiftUI
 
 struct BookingListView: View {
@@ -73,8 +71,12 @@ struct BookingListView: View {
         }
         
         Task {
-            await firestoreService.fetchAvailableVehicles()
-            await firestoreService.fetchBookings(for: user.uid)
+            do {
+                try await firestoreService.fetchAvailableVehicles()
+                try await firestoreService.fetchBookings(for: user.uid)
+            } catch {
+                firestoreService.errorMessage = "Failed to load data: \(error.localizedDescription)"
+            }
         }
     }
 }
@@ -86,4 +88,3 @@ struct BookingListView_Previews: PreviewProvider {
             .environmentObject(AuthViewModel())
     }
 }
-

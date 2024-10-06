@@ -1,10 +1,8 @@
-// Views/ReviewView.swift
-
 import SwiftUI
 
 struct ReviewView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-    @EnvironmentObject var reviewService: ReviewService // Add ReviewService as EnvironmentObject
+    @EnvironmentObject var reviewService: ReviewService
     @Environment(\.presentationMode) var presentationMode
     
     @State private var rating: Int = 5
@@ -12,57 +10,55 @@ struct ReviewView: View {
     @State private var isSubmitting: Bool = false
     @State private var errorMessage: String? = nil
     
-    var vehicle: Vehicle // The vehicle being reviewed
+    var vehicle: Vehicle
     
     var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("Rating")) {
-                    RatingView(rating: $rating)
-                }
-                
-                Section(header: Text("Comment")) {
-                    TextEditor(text: $comment)
-                        .frame(height: 150)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.gray.opacity(0.5), lineWidth: 1)
-                        )
-                }
-                
-                if let errorMessage = errorMessage {
-                    Section {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                    }
-                }
-                
+        Form {
+            Section(header: Text("Rating")) {
+                RatingView(rating: $rating)
+            }
+            
+            Section(header: Text("Comment")) {
+                TextEditor(text: $comment)
+                    .frame(height: 150)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.5), lineWidth: 1)
+                    )
+            }
+            
+            if let errorMessage = errorMessage {
                 Section {
-                    Button(action: submitReview) {
-                        if isSubmitting {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.blue)
-                                .cornerRadius(8)
-                        } else {
-                            Text("Submit Review")
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.blue)
-                                .cornerRadius(8)
-                        }
-                    }
-                    .disabled(isSubmitting || !isFormValid)
+                    Text(errorMessage)
+                        .foregroundColor(.red)
                 }
             }
-            .navigationTitle("Write a Review")
-            .navigationBarItems(trailing: Button("Cancel") {
-                presentationMode.wrappedValue.dismiss()
-            })
+            
+            Section {
+                Button(action: submitReview) {
+                    if isSubmitting {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(8)
+                    } else {
+                        Text("Submit Review")
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(8)
+                    }
+                }
+                .disabled(isSubmitting || !isFormValid)
+            }
         }
+        .navigationTitle("Write a Review")
+        .navigationBarItems(trailing: Button("Cancel") {
+            presentationMode.wrappedValue.dismiss()
+        })
     }
     
     // MARK: - Computed Properties
@@ -98,14 +94,12 @@ struct ReviewView: View {
                 try await reviewService.addReview(review)
                 
                 // Post a notification upon successful submission
-                DispatchQueue.main.async {
+                await MainActor.run {
                     NotificationCenter.default.post(name: .reviewAdded, object: nil)
-                    
-                    // Optionally, show a success message or navigate back
                     presentationMode.wrappedValue.dismiss()
                 }
             } catch {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     self.errorMessage = error.localizedDescription
                     self.isSubmitting = false
                 }
@@ -116,8 +110,9 @@ struct ReviewView: View {
 
 struct ReviewView_Previews: PreviewProvider {
     static var previews: some View {
-        ReviewView(vehicle: Vehicle.example)
-            .environmentObject(ReviewService()) // Inject ReviewService
+        let exampleVehicle = Vehicle(id: "123", ownerID: "owner123", make: "Toyota", model: "Camry", year: 2020, pricePerDay: 50)
+        ReviewView(vehicle: exampleVehicle)
+            .environmentObject(ReviewService())
             .environmentObject(AuthViewModel())
     }
 }

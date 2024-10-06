@@ -1,11 +1,10 @@
-// Views/TransactionListView.swift
-
 import SwiftUI
+import FirebaseAuth
 
 struct TransactionListView: View {
     @EnvironmentObject var firestoreService: FirestoreService
     @EnvironmentObject var authViewModel: AuthViewModel
-
+    
     var body: some View {
         VStack {
             if firestoreService.transactions.isEmpty {
@@ -37,18 +36,16 @@ struct TransactionListView: View {
         }
         .navigationTitle("Transactions")
         .task {
-            if let user = authViewModel.user {
+            if let user = Auth.auth().currentUser { // Fetch the current user from FirebaseAuth
                 do {
                     try await firestoreService.fetchTransactions(for: user.uid)
                 } catch {
-                    // Handle the error as needed
-                    // For example, you might want to set an error message or log the error
-                    // Since firestoreService handles errorMessage, no action is required here
+                    print("Error fetching transactions: \(error.localizedDescription)")
                 }
             }
         }
     }
-
+    
     /// Formats a Date object into a readable string.
     func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
@@ -67,21 +64,18 @@ struct TransactionListView_Previews: PreviewProvider {
             id: "transaction123",
             userID: "user123",
             vehicleID: "vehicle123",
-            type: "earning",
             amount: 100.0,
-            date: Date()
+            date: Date(),
+            type: "earning"
         )
         
         let mockFirestoreService = FirestoreService()
         mockFirestoreService.transactions = [exampleTransaction]
         
-        let authViewModel = AuthViewModel()
-        authViewModel.user = User(uid: "user123", email: "user@example.com") // Assuming User struct
-        
         return NavigationView {
             TransactionListView()
                 .environmentObject(mockFirestoreService)
-                .environmentObject(authViewModel)
+                .environmentObject(AuthViewModel())  // Add a mock or empty AuthViewModel
         }
     }
 }
